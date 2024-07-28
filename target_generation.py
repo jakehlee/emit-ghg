@@ -28,8 +28,8 @@ import h5py
 
 def check_param(value, min, max, name):
     if value < min or value > max:
-        raise ValueError('The value for {name} exceeds the sampled parameter space.'
-                         'The limits are[{min}, {max}], requested {value}.')
+        raise ValueError(f'The value for {name} exceeds the sampled parameter space.'
+                         f'The limits are[{min}, {max}], requested {value}.')
 
 
 @np.vectorize
@@ -143,7 +143,8 @@ def load_ch4_dataset():
     # if correcthash != filehash:
     #     raise RuntimeError('Dataset file is invalid.')
     # datafile = np.load(filename)
-    datafile = h5py.File('/beegfs/scratch/jchapman/CO2CH4TargetGen/dataset_ch4_full.hdf5', 'r', rdcc_nbytes=4194304)
+    #datafile = h5py.File('/beegfs/scratch/jchapman/CO2CH4TargetGen/dataset_ch4_full.hdf5', 'r', rdcc_nbytes=4194304)
+    datafile = h5py.File('/scratch/cmml/tfch4/emit_ghg/dataset_ch4_full.hdf5', 'r', rdcc_nbytes=4194304)
     return datafile['modtran_data'], datafile['modtran_param'], datafile['wave'], 'ch4'
 
 
