@@ -178,16 +178,15 @@ def load_pca_dataset():
     return simulation_spectra, parameters, wavelengths, 'ch4'
 
 
-def generate_library(gas_concentration_vals, zenith=0, sensor=120, ground=0, water=0, order=1, dataset_fcn=load_ch4_dataset):
-    grid, params, wave, gas = dataset_fcn()
+def generate_library(gas_concentration_vals, zenith=0, sensor=120, ground=0, water=0, order=1, dataset=None):
+    grid, params, wave, gas = dataset
     rads = np.empty((len(gas_concentration_vals), grid.shape[-1]))
     for i, ppmm in enumerate(gas_concentration_vals):
         rads[i, :] = spline_5deg_lookup(
             grid, zenith=zenith, sensor=sensor, ground=ground, water=water, conc=ppmm, gas=gas, order=order)
     return rads, wave
 
-
-def generate_template_from_bands(centers, fwhm, params, dataset_loader, **kwargs):
+def generate_template_from_bands(centers, fwhm, params, dataset, **kwargs):
     """Calculate a unit absorption spectrum for methane by convolving with given band information.
 
     :param centers: wavelength values for the band centers, provided in nanometers.
@@ -214,7 +213,7 @@ def generate_template_from_bands(centers, fwhm, params, dataset_loader, **kwargs
     concentrations = np.asarray(kwargs.get(
         'concentrations', [0.0, 1000, 2000, 4000, 8000, 16000, 32000, 64000]))
     rads, wave = generate_library(
-        concentrations, dataset_fcn=dataset_loader, **params)
+        concentrations, dataset=dataset, **params)
     # sigma = fwhm / ( 2 * sqrt( 2 * ln(2) ) )  ~=  fwhm / 2.355
     sigma = fwhm / (2.0 * np.sqrt(2.0 * np.log(2.0)))
     # response = scipy.stats.norm.pdf(wave[:, None], loc=centers[None, :], scale=sigma[None, :])
